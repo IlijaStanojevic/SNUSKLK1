@@ -13,7 +13,7 @@ namespace SNUSKLK1
         {
             return job.Type switch
             {
-                JobType.Prime => Task.Run(() => PrimeHelper.Process(job.Payload)),
+                JobType.Prime => Task.Run(() => ProcessPrime(job.Payload)),
                 JobType.IO => Task.Run(() => ProcessIO(job.Payload)),
                 _ => throw new NotImplementedException()
             };
@@ -25,11 +25,7 @@ namespace SNUSKLK1
             Thread.Sleep(delay);
             return new Random().Next(0, 101);
         }
-    }
-
-    public static class PrimeHelper
-    {
-        public static int Process(string payload)
+        public static int ProcessPrime(string payload)
         {
             var parts = payload.Split(',');
             int max = int.Parse(parts[0]);
@@ -60,4 +56,5 @@ namespace SNUSKLK1
             return true;
         }
     }
+
 }

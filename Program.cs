@@ -25,13 +25,22 @@ public class Program
                 $"{DateTime.Now} FAILED {job.Id} ABORT\n");
         };
 
-        // initial jobs - config file
+        // initial jobs - iz config file
         foreach (var job in config.Jobs)
         {
             system.Submit(job);
         }
 
         Console.WriteLine($"Loaded {config.Jobs.Count} initial jobs");
+
+/*        Console.WriteLine("TOP 3 JOBS: ");
+        var topJobs = system.GetTopJobs(3);
+
+        foreach (var job in topJobs)
+        {
+            Console.WriteLine($"{job.Id} | {job.Type} | Priority: {job.Priority} | Payload: {job.Payload}");
+        }*/
+
 
         var rand = new Random();
         // random job lopp
@@ -73,7 +82,6 @@ public class Program
         }
 
         RunTest(system).GetAwaiter().GetResult();
-
         Console.WriteLine("System running... Press ENTER to exit");
         Console.ReadLine();
     }

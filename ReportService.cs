@@ -38,7 +38,7 @@ namespace SNUSKLK1
 
             var report = new XElement("Report",
                 new XAttribute("timestamp", now));
-
+            // izvestaj format
             foreach (var g in grouped)
             {
                 var typeEl = new XElement("JobType",
@@ -65,7 +65,7 @@ namespace SNUSKLK1
             var files = Directory.GetFiles(dir, "report_*.xml")
                                  .OrderBy(f => f)
                                  .ToList();
-
+            // delete oldest report
             if (files.Count >= 10)
             {
                 File.Delete(files.First()); 

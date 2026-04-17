@@ -24,7 +24,7 @@ namespace SNUSKLK1
                 WorkerCount = int.Parse(doc.Root.Element("WorkerCount").Value),
                 MaxQueueSize = int.Parse(doc.Root.Element("MaxQueueSize").Value)
             };
-
+            // read xml payload
             foreach (var jobEl in doc.Root.Element("Jobs").Elements("Job"))
             {
                 config.Jobs.Add(new Job

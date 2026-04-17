@@ -81,7 +81,7 @@ namespace SNUSKLK1
                 await _signal.WaitAsync();
 
                 Job job;
-
+                // thread safe za dequeue 
                 lock (_lock)
                 {
                     job = _queue.Dequeue();
@@ -94,7 +94,6 @@ namespace SNUSKLK1
         private async Task ProcessJob(Job job)
         {
             int retries = 0;
-
             while (retries < 3)
             {
                 var sw = System.Diagnostics.Stopwatch.StartNew();
