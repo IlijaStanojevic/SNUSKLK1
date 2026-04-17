@@ -18,12 +18,23 @@ namespace SNUSKLK1
 
         private readonly ConcurrentDictionary<Guid, TaskCompletionSource<int>> _results = new();
 
+        private readonly ReportService _reportService = new();
+
         public event Func<Job, int, Task> JobCompleted;
         public event Func<Job, Task> JobFailed;
 
         public ProcessingSystem(int workerCount, int maxQueueSize)
         {
             _maxQueueSize = maxQueueSize;
+            Task.Run(async () =>
+            {
+                while (true)
+                {
+                    await Task.Delay(TimeSpan.FromMinutes(1));
+                    //await Task.Delay(TimeSpan.FromSeconds(10));
+                    _reportService.GenerateReport();
+                }
+            });
 
             for (int i = 0; i < workerCount; i++)
             {
@@ -84,6 +95,8 @@ namespace SNUSKLK1
 
             while (retries < 3)
             {
+                var sw = System.Diagnostics.Stopwatch.StartNew();
+
                 try
                 {
                     var processingTask = JobExecutor.Execute(job);
@@ -95,7 +108,11 @@ namespace SNUSKLK1
 
                     int result = await processingTask;
 
+                    sw.Stop();
+
                     _results[job.Id].SetResult(result);
+
+                    _reportService.Record(job, true, sw.ElapsedMilliseconds);
 
                     if (JobCompleted != null)
                         await JobCompleted(job, result);
@@ -104,11 +121,14 @@ namespace SNUSKLK1
                 }
                 catch
                 {
+                    sw.Stop();
                     retries++;
 
                     if (retries >= 3)
                     {
                         _results[job.Id].SetResult(-1);
+
+                        _reportService.Record(job, false, sw.ElapsedMilliseconds);
 
                         if (JobFailed != null)
                             await JobFailed(job);
