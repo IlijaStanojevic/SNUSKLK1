@@ -33,16 +33,16 @@ public class Program
 
         Console.WriteLine($"Loaded {config.Jobs.Count} initial jobs");
 
-/*        Console.WriteLine("TOP 3 JOBS: ");
-        var topJobs = system.GetTopJobs(3);
+        /*        Console.WriteLine("TOP 3 JOBS: ");
+                var topJobs = system.GetTopJobs(3);
 
-        foreach (var job in topJobs)
-        {
-            Console.WriteLine($"{job.Id} | {job.Type} | Priority: {job.Priority} | Payload: {job.Payload}");
-        }*/
+                foreach (var job in topJobs)
+                {
+                    Console.WriteLine($"{job.Id} | {job.Type} | Priority: {job.Priority} | Payload: {job.Payload}");
+                }*/
 
 
-        var rand = new Random();
+        var rand = Random.Shared;
         // random job lopp
         for (int i = 0; i < config.WorkerCount; i++)
         {
