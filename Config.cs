@@ -58,7 +58,7 @@ namespace SNUSKLK1
             {
                 return raw.Split(':')[1];
             }
-
+            // uvek je dobar format
             throw new Exception("Invalid payload format");
         }
     }

@@ -31,6 +31,7 @@ namespace SNUSKLK1
                 while (true)
                 {
                     await Task.Delay(TimeSpan.FromMinutes(1));
+                    // za testiranje 10s
                     //await Task.Delay(TimeSpan.FromSeconds(10));
                     _reportService.GenerateReport();
                 }
@@ -46,6 +47,7 @@ namespace SNUSKLK1
         {
             lock (_lock)
             {
+                // indempotentnost
                 if (_results.ContainsKey(job.Id))
                 {
                     return new JobHandle

@@ -10,14 +10,14 @@ public class Program
         var system = new ProcessingSystem(
             config.WorkerCount,
             config.MaxQueueSize);
-
+        // success job event
         system.JobCompleted += async (job, result) =>
         {
             Console.WriteLine($"COMPLETED {job.Id} = {result}");
             await File.AppendAllTextAsync("log.txt",
                 $"{DateTime.Now} COMPLETED {job.Id} {result}\n");
         };
-
+        // failed job event
         system.JobFailed += async (job) =>
         {
             Console.WriteLine($"FAILED {job.Id}");
@@ -25,6 +25,7 @@ public class Program
                 $"{DateTime.Now} FAILED {job.Id} ABORT\n");
         };
 
+        // initial jobs - config file
         foreach (var job in config.Jobs)
         {
             system.Submit(job);
@@ -33,7 +34,7 @@ public class Program
         Console.WriteLine($"Loaded {config.Jobs.Count} initial jobs");
 
         var rand = new Random();
-
+        // random job lopp
         for (int i = 0; i < config.WorkerCount; i++)
         {
             Task.Run(async () =>
@@ -71,7 +72,29 @@ public class Program
             });
         }
 
+        RunTest(system).GetAwaiter().GetResult();
+
         Console.WriteLine("System running... Press ENTER to exit");
         Console.ReadLine();
+    }
+
+    // testiranje
+    static async Task RunTest(ProcessingSystem system)
+    {
+        Console.WriteLine("Running test...");
+
+        var job = new Job
+        {
+            Id = Guid.NewGuid(),
+            Type = JobType.IO,
+            Payload = "500",
+            Priority = 1
+        };
+
+        var handle = system.Submit(job);
+
+        int result = await handle.Result;
+
+        Console.WriteLine($"TEST DONE: {result}");
     }
 }
